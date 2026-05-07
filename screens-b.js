@@ -93,8 +93,6 @@ function DetailScreen({
   if (!p) return null;
   const pct = Math.round(progress / p.rows * 100);
   const done = progress >= p.rows;
-  const rowsList = [];
-  for (let i = 1; i <= Math.min(p.rows, 12); i++) rowsList.push(generateRow(p, i));
   return /*#__PURE__*/React.createElement("div", {
     style: {
       paddingBottom: 100
@@ -307,7 +305,7 @@ function DetailScreen({
       padding: 16,
       borderRadius: 14,
       fontFamily: 'ui-monospace,"JetBrains Mono",monospace',
-      fontSize: 12.5,
+      fontSize: 15,
       lineHeight: 1.7
     }
   }, /*#__PURE__*/React.createElement("p", {
@@ -340,22 +338,17 @@ function DetailScreen({
       color: '#F5B83D',
       letterSpacing: 0.5
     }
-  }, "// PATTERN"), rowsList.map((r, i) => /*#__PURE__*/React.createElement("p", {
-    key: i,
+  }, "// PATTERN"), /*#__PURE__*/React.createElement("pre", {
     style: {
       margin: 0,
-      opacity: i < progress ? 0.3 : 1
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+      fontFamily: 'inherit',
+      fontSize: 'inherit',
+      lineHeight: 'inherit',
+      color: 'inherit'
     }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: '#7BA88B'
-    }
-  }, "R", i + 1, "."), " ", r)), p.rows > 12 && /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: '8px 0 0',
-      opacity: 0.5
-    }
-  }, "\u2026 continues for ", p.rows - 12, " more rows"))), tab === 'progress' && /*#__PURE__*/React.createElement("div", {
+  }, p.fullPattern || '')))), tab === 'progress' && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '18px 20px 0'
     }
