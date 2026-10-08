@@ -366,7 +366,9 @@ function PatternCard({
       position: 'absolute',
       top: 10,
       left: 10,
+      right: 54,
       display: 'flex',
+      flexWrap: 'wrap',
       gap: 6
     }
   }, /*#__PURE__*/React.createElement(Tag, null, p.type), /*#__PURE__*/React.createElement(Tag, null, p.skill))), /*#__PURE__*/React.createElement("div", {
@@ -423,6 +425,7 @@ function NavBtn({
   return /*#__PURE__*/React.createElement("button", {
     onClick: onClick,
     style: {
+      position: 'relative',
       flex: 1,
       appearance: 'none',
       border: 'none',
@@ -455,7 +458,16 @@ function NavBtn({
     }
   }, label));
 }
+function loadJSON(key, initial) {
+  const raw = localStorage.getItem(key);
+  return raw === null ? initial : JSON.parse(raw);
+}
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
 Object.assign(window, {
+  loadJSON,
+  saveJSON,
   ProjectShot,
   LockOverlay,
   Chip,
