@@ -348,7 +348,7 @@ function DetailScreen({
       lineHeight: 'inherit',
       color: 'inherit'
     }
-  }, p.fullPattern || '')))), tab === 'progress' && /*#__PURE__*/React.createElement("div", {
+  }, p.fullPattern || ''))), tab === 'progress' && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '18px 20px 0'
     }

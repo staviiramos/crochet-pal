@@ -61,6 +61,26 @@ function BottomNav({
       fill: "currentColor"
     }))
   }, {
+    k: 'make',
+    label: 'Make',
+    icon: /*#__PURE__*/React.createElement("svg", {
+      width: "18",
+      height: "18",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2.2",
+      strokeLinecap: "round"
+    }, /*#__PURE__*/React.createElement("rect", {
+      x: "9",
+      y: "3",
+      width: "6",
+      height: "11",
+      rx: "3"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M5 11a7 7 0 0014 0M12 18v3"
+    }))
+  }, {
     k: 'saved',
     label: 'Saved',
     icon: /*#__PURE__*/React.createElement("svg", {
@@ -129,6 +149,17 @@ function BottomNav({
     }
   }, savedCount))));
 }
+const PHONE_QUERY = '(max-width: 600px)';
+function useIsPhone() {
+  const [isPhone, setIsPhone] = useAppState(() => window.matchMedia(PHONE_QUERY).matches);
+  useAppEffect(() => {
+    const mq = window.matchMedia(PHONE_QUERY);
+    const onChange = e => setIsPhone(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isPhone;
+}
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [route, setRoute] = useAppState({
@@ -136,9 +167,11 @@ function App() {
     id: null
   });
   const [filters, setFilters] = useAppState({});
-  const [saved, setSaved] = useAppState(['p1', 'p3']);
+  const [saved, setSaved] = useAppState(() => loadJSON('cp.saved', ['p1', 'p3']));
+  const isPhone = useIsPhone();
   const [mysteryId, setMysteryId] = useAppState(null);
   const [mysteryDone, setMysteryDone] = useAppState(false);
+  useAppEffect(() => saveJSON('cp.saved', saved), [saved]);
   useAppEffect(() => {
     window.__mysteryStyle = tweaks.mysteryStyle;
   }, [tweaks.mysteryStyle]);
@@ -234,6 +267,9 @@ function App() {
         toggleSave: toggleSave
       });
       break;
+    case 'make':
+      screen = /*#__PURE__*/React.createElement(MakeScreen, null);
+      break;
     case 'learn':
       screen = /*#__PURE__*/React.createElement(LearnScreen, {
         go: go
@@ -247,10 +283,7 @@ function App() {
       });
   }
   const hideNav = ['detail', 'mystery', 'search', 'results'].includes(route.name);
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(IOSDevice, {
-    width: 402,
-    height: 874
-  }, /*#__PURE__*/React.createElement("div", {
+  const content = /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
       height: '100%',
@@ -261,7 +294,11 @@ function App() {
       flexDirection: 'column',
       position: 'relative'
     }
-  }, /*#__PURE__*/React.createElement(IOSStatusBar, null), /*#__PURE__*/React.createElement("div", {
+  }, isPhone ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: 'max(12px, env(safe-area-inset-top))'
+    }
+  }) : /*#__PURE__*/React.createElement(IOSStatusBar, null), /*#__PURE__*/React.createElement("div", {
     id: "scroll-area",
     style: {
       flex: 1,
@@ -273,7 +310,16 @@ function App() {
     route: route.name,
     go: go,
     savedCount: saved.length
-  }))), /*#__PURE__*/React.createElement(TweaksPanel, {
+  }));
+  return /*#__PURE__*/React.createElement(React.Fragment, null, isPhone ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'fixed',
+      inset: 0
+    }
+  }, content) : /*#__PURE__*/React.createElement(IOSDevice, {
+    width: 402,
+    height: 874
+  }, content), /*#__PURE__*/React.createElement(TweaksPanel, {
     title: "Tweaks"
   }, /*#__PURE__*/React.createElement(TweakSection, {
     label: "Mystery reveal style"
